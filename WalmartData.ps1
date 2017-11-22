@@ -8,7 +8,8 @@ param ($SettingsFile,
        $Years
 	   );
 $DCHash=@();
-
+$StartWeekHash=@{};
+$EndWeekHash=@{};
 function generateDataMain
 {
     loadParameters;
@@ -147,18 +148,20 @@ function generateDataMain
   }
   Wait-Job -Id $Jobs;
   Write-Host "Writing ItemBodNetworkFlow...";
+  write-host $EffectiveWeek;
   $FileNamePrefix = 'Fact.ItemBodNetwork'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
-    $job = Start-Job -Name $jobName -ScriptBlock $generateItemBod -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$EffectiveWeek;
+    $job = Start-Job -Name $jobName -ScriptBlock $generateItemBod -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash;
     $sliceId++;
     $EndDC+=[math]::floor($NumberDCs/$Slices);
     $StartDC+=[math]::floor($NumberDCs/$Slices);
     $Jobs += $job.ID;
   }
-  Wait-Job -Id $Jobs;
+  Wait-Job -Id $Jobs; 
+   
 }
 $generateInvPolicy={
 	param($OutputDirectory,$FileNamePrefix,$StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount);
@@ -458,13 +461,14 @@ function generateStoreStorage
 	}
 	$StFile.close();
 }
-$generateItemBod=
+ $generateItemBod =
 {
-	param($OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$EffectiveWeek);
-
+	param($OutputDirectory, $FileNamePrefix,$StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash);    
 	$Transport=@("Road","Railways","Flight","Ships");
+	write-host $EffectiveWeek;	
 	$ItemBodFile=[System.IO.StreamWriter] ("$OutputDirectory\$FileNamePrefix-$($sliceId).csv");
 	$ItemBodFile.writeline("Effective Start Week,Effective End Week,ItemNo,From Location No,To Location No,Load Time,Transport Mode,Priority");
+
 	for($ItemBodInd=0;$ItemBodInd -lt $ItemCount;$ItemBodInd++)
     {  
       for($DCInd=0;$DCInd -lt $NumberDCs;$DCInd++){
@@ -473,7 +477,6 @@ $generateItemBod=
       $stweek=$EffectiveWeek[$ItemBodInd,0];
       $endweek=$EffectiveWeek[$ItemBodInd,1];
       $EffStartWeek=get-date $stweek;
-
       $EffEndWeek=get-date $endweek; 
       #write-host $EffStartWeek;
       #write-host $EffEndWeek;
@@ -487,12 +490,14 @@ $generateItemBod=
       $LoadTime=get-random -minimum 1 -maximum 10;
       $TransportMode=get-random $Transport -count 1;
       $Priority=get-random -minimum 1 -maximum 10;
-      $ItemBodFile.writeline($stweek.ToString()+","+$EffEndWeek+","+$ItemNo+","+$FromLocNo+","+$ToLocNo+","+$LoadTime+","+$TransportMode+","+$Priority);
-      //$ItemBodFile.writeline($EffStartWeek.ToString()+","+$EffEndWeek+","+$ItemNo+","+$FromLocNo+","+$ToLocNo+","+$LoadTime+","+$TransportMode+","+$Priority);
+      $ItemBodFile.writeline($EffStartWeek.ToString()+","+$EffEndWeek+","+$ItemNo+","+$FromLocNo+","+$ToLocNo+","+$LoadTime+","+$TransportMode+","+$Priority);
+      #$ItemBodFile.writeline($EffStartWeek.ToString()+","+$EffEndWeek+","+$ItemNo+","+$FromLocNo+","+$ToLocNo+","+$LoadTime+","+$TransportMode+","+$Priority);
       }
       for($StoreInd=500000;$StoreInd -lt (500000+$StoreCount);$StoreInd++){
-      $stweek=$EffectiveWeek[$ItemBodInd,0];
-      $endweek=$EffectiveWeek[$ItemBodInd,1];
+      $stweek=$StartWeekHash.Get_Item($ItemBodInd);
+      $endweek=$EndWeekHash.Get_Item($ItemBodInd);
+      #$stweek=$EffectiveWeek[$ItemBodInd,0];
+      #$endweek=$EffectiveWeek[$ItemBodInd,1];
       $EffStartWeek=get-date $stweek;
       $EffEndWeek=get-date $endweek;
       #write-host $EffStartWeek;
@@ -633,7 +638,8 @@ function generateItems{
     $ItemStatus=get-random $Status -count 1;
     $SourceFlag=get-random $Flag -count 1;
     $ProductType=get-random $Type -count 1;
-   
+    $StartWeekHash.Set_Item($ItemInd,$EffStartDate);
+    $EndWeekHash.Set_Item($ItemInd,$EffEndDate);
     $EffectiveWeek[$ItemInd,0]=$EffStartDate;
      $EffectiveWeek[$ItemInd,1]=$EffEndDate;
       $ItemFile.writeline($OptCompany+","+$MerchZoneNo+","+$MerchZoneName+","+$DeptNo+","+$DeptName+","+$CatGroupNo+","+$CatGroupName+","+$CatNo+","+$CatName+","+$SubCatNo+","+$SubCatName+","+$FineLineNo+","+$FineLineName+","+$CID+","+$StyleNo+","+$StyleDesc+","+$StyleColorNo+","+$StyleColorDesc+","+$ItemNo+","+$ItemName+","+$VendorName+","+$VendorNo+","+$VendorNo9+","+$Network+","+$FlowPolIDC+","+$FlowPolRDC+","+$BreakPack+","+$ItemConv+","+$BaseUnitRetail+","+$UnitCost+","+$ItemWeight+","+$ItemLength+","+$ItemHeight+","+$ItemWidth+","+$VNPKLength+","+$VNPKWidth+","+$VNPKHeight+","+$VNPKWeight+","+$VNPKCost+","+$VNPKQuantity+","+$WHPKLength+","+$WHPKWidth+","+$WHPKHeight+","+$WHPKWeight+","+$WHPKUnitCost+","+$WHPKQuantity+","+$EffStartDate+","+$EffEndDate+","+$ItemStatus+","+$SourceFlag+","+$ProductType);
