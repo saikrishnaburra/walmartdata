@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <Setting id="OutputDirectory">D:\data\samp</Setting>
+  <Setting id="NumberDCs">10</Setting>
+  <Setting id="StoreCount">10</Setting>
+  <Setting id="ItemCount">12</Setting>
+  <Setting id="StartDate">1/1/2017</Setting>
+  <Setting id="Years">1</Setting>
+  <Setting id="Slices">4</Setting>
+</Settings>
