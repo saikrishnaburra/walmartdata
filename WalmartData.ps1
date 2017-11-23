@@ -45,6 +45,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.StoreLabour'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactStoreLabour-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateStoreLabourFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId;
@@ -59,6 +60,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.Carrier Capacity'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateCarrierCapacityFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs;
@@ -72,6 +74,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.EveryDayDemand'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateEveryDayForecastedDemandFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount;
@@ -85,6 +88,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.OnHandInventory'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateOnHandInventoryFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount;
@@ -99,6 +103,7 @@ function generateDataMain
   $StartItem=0;
   $ItemSliceCount=[math]::floor($ItemCount/$Slices);
   $EndItem=[math]::floor($ItemSliceCount);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateInTransitFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartItem,$EndItem,$sliceId,$NumberDCs,$ItemCount;
@@ -112,6 +117,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.OpenPurchaseOrders'
   $StartDC=0;
   $EndDC=[math]::floor($NumberDCs/$Slices);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generatePurchaseOrderFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartDC,$EndDC,$sliceId,$NumberDCs,$ItemCount;
@@ -125,6 +131,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.DCWorkOrders'
   $StartDC=0;
   $EndDC=[math]::floor($NumberDCs/$Slices);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateDCWorkOrderFacts -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartDC,$EndDC,$sliceId,$NumberDCs,$ItemCount;
@@ -138,6 +145,7 @@ function generateDataMain
   $FileNamePrefix = 'Fact.InventoryPolicy'
   $StartWeek=0;
   $EndWeek=[math]::floor($Weeks);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
     $job = Start-Job -Name $jobName -ScriptBlock $generateInvPolicy -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount;
@@ -148,16 +156,17 @@ function generateDataMain
   }
   Wait-Job -Id $Jobs;
   Write-Host "Writing ItemBodNetworkFlow...";
-  write-host $EffectiveWeek;
+ # write-host $EffectiveWeek;
   $FileNamePrefix = 'Fact.ItemBodNetwork'
-  $StartWeek=0;
-  $EndWeek=[math]::floor($Weeks);
+  $StartItem=0;
+  $EndItem=[math]::floor($ItemCount/$Slices);
+  $Jobs = @();
    1..$Slices | ForEach-Object { $sliceId = 0; } {
     $jobName = "FactCarrierCapacity-Slice-$($sliceId)";
-    $job = Start-Job -Name $jobName -ScriptBlock $generateItemBod -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash;
+    $job = Start-Job -Name $jobName -ScriptBlock $generateItemBod -ArgumentList $OutputDirectory, $FileNamePrefix, $StoreCount,$Weeks,$StartItem,$EndItem,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash;
     $sliceId++;
-    $EndDC+=[math]::floor($NumberDCs/$Slices);
-    $StartDC+=[math]::floor($NumberDCs/$Slices);
+   # $EndItem+=[math]::floor($ItemCount/$Slices);
+   # $StartItem+=[math]::floor($ItemCount/$Slices);
     $Jobs += $job.ID;
   }
   Wait-Job -Id $Jobs; 
@@ -463,13 +472,12 @@ function generateStoreStorage
 }
  $generateItemBod =
 {
-	param($OutputDirectory, $FileNamePrefix,$StoreCount,$Weeks,$StartWeek,$EndWeek,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash);    
+	param($OutputDirectory, $FileNamePrefix,$StoreCount,$Weeks,$StartItem,$EndItem,$sliceId,$NumberDCs,$ItemCount,$StartWeekHash,$EndWeekHash);    
 	$Transport=@("Road","Railways","Flight","Ships");
 	write-host $EffectiveWeek;	
 	$ItemBodFile=[System.IO.StreamWriter] ("$OutputDirectory\$FileNamePrefix-$($sliceId).csv");
 	$ItemBodFile.writeline("Effective Start Week,Effective End Week,ItemNo,From Location No,To Location No,Load Time,Transport Mode,Priority");
-
-	for($ItemBodInd=0;$ItemBodInd -lt $ItemCount;$ItemBodInd++)
+	for($ItemBodInd=$StartItem;$ItemBodInd -lt $EndItem;$ItemBodInd++)
     {  
       for($DCInd=0;$DCInd -lt $NumberDCs;$DCInd++){
       for($DCid=0;$DCid -lt $NumberDCs;$DCid++)
@@ -663,8 +671,8 @@ function generateCalendar{
        $WeekCnt=[math]::floor($WeekCount/7);
        #write-host $SDate.Month;
        #write-host $QuarterHash.Get_Item($SDate.Month);
-       $date=get-date $SDate -format "dd/MM/yyyy"
-       $TimeFile.writeline($SDate.Year.ToString()+","+"Q-"+$QuarterHash.Get_Item($SDate.Month)+","+$SDate.Month+","+$SDate.Month+","+$MonthName+","+$WeekCnt+","+$WeekCnt+","+$SDate.Day+","+$SDate.DayofWeek+","+$date);
+       $date=get-date $SDate -format "yyyy-MM-dd"
+       $TimeFile.writeline($SDate.Year.ToString()+","+$QuarterHash.Get_Item($SDate.Month)+","+$SDate.Month+","+$SDate.Month+","+$MonthName+","+$WeekCnt+","+$WeekCnt+","+$SDate.Day+","+$SDate.DayofWeek+","+$date);
        $SDate=$SDate.AddDays(1);
 	}
 	$script:Weeks=$WeekCnt;
