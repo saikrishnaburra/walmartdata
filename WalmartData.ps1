@@ -221,11 +221,11 @@ $generateDCWorkOrderFacts=
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $ShipDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $ShipDate=Get-Date $Date -Format 'yyyy-MM-dd';
 
     $rand=get-random -minimum 1 -maximum 7;
     $Date.AddDays($rand);
-    $RDate=Get-Date $Date -Format 'dd/MM/yyyy'
+    $RDate=Get-Date $Date -Format 'yyyy-MM-dd'
     $WOUnits=get-random -minimum  1000 -maximum 20000;
     $WOFile.writeline($ShipDate+","+$RDate+","+$DCInd+","+$DInd+","+$WorkOrdNo+","+$ItemInd+","+$WOUnits);
     $WorkOrdNo++;
@@ -237,11 +237,11 @@ $generateDCWorkOrderFacts=
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $ShipDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $ShipDate=Get-Date $Date -Format 'yyyy-MM-dd';
 
     $rand=get-random -minimum 1 -maximum 7;
     $Date.AddDays($rand);
-    $RDate=Get-Date $Date -Format 'dd/MM/yyyy'
+    $RDate=Get-Date $Date -Format 'yyyy-MM-dd'
     $WOUnits=get-random -minimum  1000 -maximum 20000;
     $WOFile.writeline($ShipDate+","+$RDate+","+$DCInd+","+$StoreInd+","+$WorkOrdNo+","+$ItemInd+","+$WOUnits);
     $WorkOrdNo++;
@@ -266,11 +266,11 @@ $generatePurchaseOrderFacts={
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $orderDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $orderDate=Get-Date $Date -Format 'yyyy-MM-dd';
 
     $rand=get-random -minimum 1 -maximum 7;
     $Date.AddDays($rand);
-    $ShipDate=Get-Date $Date -Format 'dd/MM/yyyy'
+    $ShipDate=Get-Date $Date -Format 'yyyy-MM-dd'
     $RDate=$ShipDate; 
     $VendorNo=get-random -minimum 1000000 -maximum 2000000;
     $VendorName="Vendor-"+$VendorNo;
@@ -298,7 +298,7 @@ $generateInTransitFacts={
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $RDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $RDate=Get-Date $Date -Format 'yyyy-MM-dd';
       $InvVolume=get-random -minimum 100 -maximum 200;
       $TFile.writeline($RDate+","+$ItemInd+","+$DCInd+","+"DC,"+$StoreInd+","+"Store,"+$InvVolume);
 	  
@@ -490,8 +490,8 @@ function generateStoreStorage
       #write-host $EffEndWeek;
       $EffStartWeek=$EffStartWeek.AddDays(6);
       $EffEndWeek=$EffEndWeek.AddDays(6);
-      $EffStartWeek=get-date $EffStartWeek -format "dd/MM/yyyy";
-      $EffEndWeek=get-date $EffEndWeek -format "dd/MM/yyyy";
+      $EffStartWeek=get-date $EffStartWeek -format "yyyy-MM-dd";
+      $EffEndWeek=get-date $EffEndWeek -format "yyyy-MM-dd";
       $ItemNo=$ItemBodInd;
       $FromLocNo=$DCInd;
       $ToLocNo=$DCid;
@@ -512,8 +512,8 @@ function generateStoreStorage
       #write-host $EffEndWeek;
       $EffStartWeek=$EffStartWeek.AddDays(6);
       $EffEndWeek=$EffEndWeek.AddDays(6);
-      $EffStartWeek=get-date $EffStartWeek -format "dd/MM/yyyy";
-      $EffEndWeek=get-date $EffEndWeek -format "dd/MM/yyyy";
+      $EffStartWeek=get-date $EffStartWeek -format "yyyy-MM-dd";
+      $EffEndWeek=get-date $EffEndWeek -format "yyyy-MM-dd";
       $ItemNo=$ItemBodInd;
       $FromLocNo=$DCInd;
       $ToLocNo=$StoreInd;
@@ -561,12 +561,12 @@ function generateStores
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $OpenDate=Get-Date $Date -Format 'dd/MM/yy';
+    $OpenDate=Get-Date $Date -Format 'yyyy-MM-dd';
     $theMin=$Date;
     $theRandomGen = new-object random
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $CloseDate=Get-Date $Date -Format 'dd/MM/yy';
+    $CloseDate=Get-Date $Date -Format 'yyyy-MM-dd';
          $Latitude=get-random -minimum 0.0  -Maximum 90.0;
          $Longitude=get-random -minimum 0.0 -maximum 180.0;
          $StoreFile.writeline($StoreNo.ToString()+","+$MarketNo+","+$MarketName+","+$RegionNo+","+$RegionName+","+$SubDivNo+","+$SubDivName+","+$DivNo+","+$DivName+","+$BuNo+","+$BuName+","+$MarketMgr+","+$MrktHomeStr+","+$StrMgr+","+$StreetAddr+","+$StrCity+","+$StrState+","+$StrZipCode+","+$StrSqFt+","+$StrType+","+$StrStatus+","+$OpenDate+","+$CloseDate+","+$Longitude+","+$Latitude);
