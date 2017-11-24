@@ -447,12 +447,12 @@ function generateDCs
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $OpenDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $OpenDate=Get-Date $Date -Format 'yyyy-MM-dd';
     $theMin=$Date;
     $theRandomGen = new-object random
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $CloseDate=Get-Date $Date -Format 'dd/MM/yyyy';
+    $CloseDate=Get-Date $Date -Format 'yyyy-MM-dd';
 	$DCFile.writeline($DCInd.ToString()+","+$DCTypeRand+","+$DCRegion+","+$DCInd+","+$DCName+","+$DCCity+","+$DCState+","+$DCSqFt+","+$DCZip+","+$DCStatus+","+$OpenDate+","+$CloseDate);
 }
 $DCFile.close();
