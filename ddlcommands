@@ -1,0 +1,71 @@
+#Creating tables;
+
+create table DCMaster(DCNo int,DCType String,DCRegion String,DCKey int,DCName String,DCCity String,DCState String,DCSqft int,DCZipCode String,DCStatus String,OpenDate Date,CloseDate Date)row format delimited fields terminated by ',' stored as textfile;
+create table Calendar(QuarterNo int,MonthNo int,4_5_4Month String,MonthName String,4_5_4WeekNo int,WeekNo int,DayNo int,DayName String,Datestamp Date)row format delimited fields terminated by ',' stored as textfile;
+create table ItemMaster(OperatingCompany String,MerchZone String,MerchZoneName String,DeptNo String,DeptName String,CategoryGroupNo String,CategoryGroupName String,CategoryNo String,CategoryName String,SubCategoryNo int,SubCategoryName String,FineLineNo String,FineLineName String,CID int,StyleNo int,StyleDesc String,StyleColorNo int,StyleColorDesc String,ItemNo int,ItemName String,VendorName String,VendorNo int,9DigitVendorName String,Network String,FlowPolicyIDC String,FlowPolicyRDC String,Breakpack String,ItemConveyable String,BaseUnitRetail int,UnitCost int,ItemWeight int,ItemLength int,ItemHeight int,ItemWidth int,VNPKLength int,VNPKWidth int,VNPKHeight int,VNPKWeight int,VNPKCost int,VNPKQuantity int,WHPKLength int,WHPKWidth int,WHPKHeight int,WHPKWeight int,WHPKUnitCost int,WHPKQuantity int,EffStartDate Date,EffEndDate Date,ItemStatus String,SourceFlag String,ProductType String)row format delimited fields terminated by ',' stored as textfile;
+create table StoreMaster(StoreNo int,MarketNo int,MarketName String,RegionNo int,RegionName String,SubDivisionNo int,SubDivisionName String,DivisonNo int,DivisonName String,BuNo int,BuName String,MarketMgr String,MrktHomeStr int,StrMgr String,StreetAddr String,StrCity String,StrState String,StrZipCode String,StrSqFt int,StrType String,StrStatus String,OpenDate Date,CloseDate Date,Longitude String,Latitude String)row format delimited fields terminated by ',' stored as textfile;
+create table storelabour(weekno int,shift string,storeno int,resourcetype string,hoursperweekbase int,hoursperweekflex int)row format delimited fields terminated by ',' stored as textfile;
+ create table carriercapacity(weekno int,carrierno int,resourcetype string,basetrailers int,flextrailers int,fromloc int,toloc int)row format delimited fields terminated by ',' stored as textfile;
+  create table dclabour(weekno int,shift string,dcno int,resourcetype int,hoursperweekbase  int,hoursperweekflex int)row format delimited fields terminated by ',' stored as textfile;
+create table everydaydemand(weekno int,storeno int,itemno int,demandtype string,forecast int)row format delimited fields terminated by ',' stored as textfile;
+create table onhandinventory(weekno int,locno int,itemno int,invunits int)row format delimited fields terminated by ',' stored as textfile;
+create table  DCStorage(DCNo int,StorageType String,CubicFeetPrime int,CubicFeetReserve int,FlexStorage int)row format delimited fields terminated by ',' stored as textfile;
+create table intransit(receiptdate date,itemno int,fromloc int,fromloctype string,toloc int,toloctype string,intransitunits int)row format delimited fields terminated by ',' stored as textfile;
+create table purchaseorders(pono int,potype int,orderdate date,receiptdate date,vendorno int,vendorname string,dcno int,itemno int,acctdept int,orderdept int,pounits int)row format delimited fields terminated by ',' stored as textfile;
+ create table invpolicy(weekno int,locno int,itemno int,safetystock int,min int,max int,presentationmax int)row format delimited fields terminated by ',' stored as textfile;
+ create table itembodnetwork(effstartweek date,effendweek date,itemno string,fromloc int,toloc int,leadtime int,transmode string,priority string)row format delimited fields terminated by ',' stored as textfile;
+ create table dcworkorders(shipdate date,receiptdate date,fromloc int,toloc int,workorderno int,itemno int,workorderunits int)row format delimited fields terminated by ',' stored as textfile;
+
+#Load Data into Tables;
+
+load data local inpath "./Downloads/data/Calendar.csv" overwrite into table calendar;
+load data local inpath "./Downloads/data/DC Master.csv" overwrite into table dcmaster;
+load data local inpath "./Downloads/data/DC Storage.csv" overwrite into table dcstorage;
+load data local inpath "./Downloads/data/Item Master.csv" overwrite into table itemmaster;
+load data local inpath "./Downloads/data/Store Master.csv" overwrite into table storemaster;
+load data local inpath "./Downloads/data/Fact.Carrier Capacity-0.csv" overwrite into table carriercapacity;
+load data local inpath "./Downloads/data/Fact.Carrier Capacity-1.csv" into table carriercapacity;
+load data local inpath "./Downloads/data/Fact.Carrier Capacity-2.csv" into table carriercapacity;
+load data local inpath "./Downloads/data/Fact.Carrier Capacity-3.csv" into table carriercapacity;
+load data local inpath "./Downloads/data/Fact.DCLabour-0.csv" overwrite into table dclabour;
+load data local inpath "./Downloads/data/Fact.DCLabour-1.csv" into table dclabour;
+load data local inpath "./Downloads/data/Fact.DCLabour-2.csv" into table dclabour;
+load data local inpath "./Downloads/data/Fact.DCLabour-3.csv" into table dclabour;
+load data local inpath "./Downloads/data/Fact.DCWorkOrders-0.csv" overwrite into table dcworkorders;
+load data local inpath "./Downloads/data/Fact.DCWorkOrders-1.csv" into table dcworkorders;
+load data local inpath "./Downloads/data/Fact.DCWorkOrders-2.csv" into table dcworkorders;
+load data local inpath "./Downloads/data/Fact.DCWorkOrders-3.csv" into table dcworkorders;
+load data local inpath "./Downloads/data/Fact.EveryDayDemand-0.csv" overwrite into table everydaydemand;
+load data local inpath "./Downloads/data/Fact.EveryDayDemand-1.csv" into table everydaydemand;
+load data local inpath "./Downloads/data/Fact.EveryDayDemand-2.csv" into table everydaydemand;
+load data local inpath "./Downloads/data/Fact.EveryDayDemand-3.csv" into table everydaydemand;
+load data local inpath "./Downloads/data/Fact.InTransit-0.csv" overwrite into table intransit;
+load data local inpath "./Downloads/data/Fact.InTransit-1.csv" into table intransit;
+load data local inpath "./Downloads/data/Fact.InTransit-2.csv" into table intransit;
+load data local inpath "./Downloads/data/Fact.InTransit-3.csv" into table intransit;
+load data local inpath "./Downloads/data/Fact.InventoryPolicy-0.csv" overwrite into table invpolicy;
+load data local inpath "./Downloads/data/Fact.InventoryPolicy-1.csv" into table invpolicy;
+load data local inpath "./Downloads/data/Fact.InventoryPolicy-2.csv" into table invpolicy;
+load data local inpath "./Downloads/data/Fact.InventoryPolicy-3.csv" into table invpolicy;
+load data local inpath "./Downloads/data/Fact.ItemBodNetwork-0.csv" overwrite into table itembodnetwork;
+load data local inpath "./Downloads/data/Fact.ItemBodNetwork-1.csv" into table itembodnetwork;
+load data local inpath "./Downloads/data/Fact.ItemBodNetwork-2.csv" into table itembodnetwork;
+load data local inpath "./Downloads/data/Fact.ItemBodNetwork-3.csv" into table itembodnetwork;
+load data local inpath "./Downloads/data/Fact.OnHandInventory-0.csv" overwrite into table onhandinventory;
+load data local inpath "./Downloads/data/Fact.OnHandInventory-1.csv"  into table onhandinventory;
+load data local inpath "./Downloads/data/Fact.OnHandInventory-2.csv"  into table onhandinventory;
+load data local inpath "./Downloads/data/Fact.OnHandInventory-3.csv"  into table onhandinventory;
+load data local inpath "./Downloads/data/Fact.OpenPurchaseOrders-0.csv" overwrite into table purchaseorders;
+load data local inpath "./Downloads/data/Fact.OpenPurchaseOrders-1.csv"  into table purchaseorders;
+load data local inpath "./Downloads/data/Fact.OpenPurchaseOrders-2.csv"  into table purchaseorders;
+load data local inpath "./Downloads/data/Fact.OpenPurchaseOrders-3.csv"  into table purchaseorders;
+
+#create tables for the walmart_scs schema;
+
+create table location as select dcno,"DC",concat("DCSubgroup-",dcno)from wmt_staging.dcmaster;
+
+
+
+
+
+
