@@ -187,7 +187,7 @@ $generateInvPolicy={
       $SafStock=get-random -minimum 100 -maximum 200;
       $Mindays=get-random -minimum 1 -maximum 10;
       $MaxDays=get-random -minimum $Mindays -maximum 20;
-      $PMin=get-random -minimum 100 -minimum 200;
+      $PMin=get-random -minimum 100 -maximum 200;
       $InvFile.writeline($WeekInd.ToString()+","+$StoreLocInd+","+$ItemInd+","+$SafStock+","+$Mindays+","+$MaxDays+","+$PMin);
  
 	}
@@ -196,7 +196,7 @@ $generateInvPolicy={
       $SafStock=get-random -minimum 100 -maximum 200;
       $Mindays=get-random -minimum 1 -maximum 10;
       $MaxDays=get-random -minimum $Mindays -maximum 20;
-      $PMin=get-random -minimum 100 -minimum 200;
+      $PMin=get-random -minimum 100 -maximum 200;
       $InvFile.writeline($WeekInd.ToString()+","+$StoreLocInd+","+$ItemInd+","+$SafStock+","+$Mindays+","+$MaxDays+","+$PMin);
 	}
 	}
@@ -637,12 +637,12 @@ function generateItems{
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $EffStartDate=Get-Date $Date -Format 'MM/dd/yyyy';
+    $EffStartDate=Get-Date $Date -Format 'yyyy-MM-dd';
     $theMin=$Date;
     $theRandomGen = new-object random;
     $theRandomTicks = [Convert]::ToInt64( ($theMax.ticks * 1.0 - $theMin.Ticks * 1.0 ) * $theRandomGen.NextDouble() + $theMin.Ticks * 1.0 );
     $Date=new-object DateTime($theRandomTicks);
-    $EffEndDate=Get-Date $Date -Format 'MM/dd/yyyy';
+    $EffEndDate=Get-Date $Date -Format 'yyyy-MM-dd';
     $ItemStatus=get-random $Status -count 1;
     $SourceFlag=get-random $Flag -count 1;
     $ProductType=get-random $Type -count 1;
@@ -844,7 +844,7 @@ function toInteger {
     write-host "Error converting '$numstring' to integer: $_.Exception.Message";
     0;
   }
-}
+} 
 
 #Main Function Call
 
